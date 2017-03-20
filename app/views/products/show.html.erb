@@ -24,6 +24,34 @@
           <dd><%= @product.price %></dd>
         </dl>
       </div>
+
+      <h3>Reviews</h3>
+      <% if @product.reviews.empty? %>
+        No reviews yet :(
+      <% end %>
+
+      <% if session[:user_id] %>
+        <div class="col-sm-8 well">
+        <%= form_for [@product, @review] do |form| %>
+          Description:<br>
+          <%= form.text_area :description %><br>
+          rating: <%= form.select :rating, [1,2,3,4,5] %><br>
+          <%= form.submit "Submit" %>
+        <% end %>
+        </div>
+      <% end %>
+
+      <% @product.reviews.reverse.each do |review| %>
+        <div class="col-sm-8 well">
+          <p><b>Reviewer:</b> <%= User.find(review.user_id).first_name %></p>
+          <p><b>Description:</b> <%= review.description %></p>
+          <p><b>Rating:</b> <%= review.rating %></p>
+          <% if review.user_id == session[:user_id] %>
+            <%= link_to fa_icon('trash'), [@product, review], class: 'btn btn-sm btn-danger', method: :delete %>
+          <% end %>
+        </div>
+      <% end %>
+
     </div>
 
   </article>
